@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: provider_api
+
+  # Настройки подключения к базе данных MySQL
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  flyway:
+    enabled: true
+    # Автоматически создавать служебные таблицы транзакций, если их нет
+    create-schemas: true 
+    undo-sql-migration-prefix: U
+    # Принудительно запускать миграцию при старте контекста
+    baseline-on-migrate: true
+
+      # Включаем подробные логи Flyway, чтобы сразу увидеть ошибку, если она есть
+  logging:
+    level:
+      root: INFO
+      com.study_project: DEBUG
+      org.flywaydb: DEBUG
+      org.springframework.jdbc: DEBUG
+
+  springdoc:
+    swagger-ui:
+      path: /swagger-ui.html            # Веб-страница интерфейса документации
+      operations-sorter: method         # Сортировка методов по типу (GET, POST, PUT, DELETE)
+      tags-sorter: alpha                # Сортировка контроллеров по алфавиту
+    api-docs:
+      path: /v3/api-docs                # Эндпоинт для получения сырого JSON спецификации
+

@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  lab-env-db:
+    image: mysql:9.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root_secure_password_2026
+      MYSQL_DATABASE: dev_database
+      MYSQL_USER: dev_user
+      MYSQL_PASSWORD: dev_secure_password_2026
+    ports:
+      - "127.0.0.1:3306:3306" # Доступно только на localhost, закрыто от внешней сети
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+
+  web-app:
+    build:
+      context: .devcontainer
+      dockerfile: Dockerfile.dev
+    ports:
+      - "127.0.0.1:8080:8080" # Spring Boot
+      - "127.0.0.1:5005:5005" # Отладка Java
+      - "127.0.0.1:3000:3000" # React / Vite
+    environment:
+      # Настройки подключения к MySQL (используем имя сервиса 'mysql-db' как хост)
+      - SPRING_DATASOURCE_URL=jdbc:mysql://lab-env-db:3306/dev_database?allowPublicKeyRetrieval=true&useSSL=false
+      - SPRING_DATASOURCE_USERNAME=dev_user
+      - SPRING_DATASOURCE_PASSWORD=dev_secure_password_2026
+      - WATCHPACK_POLLING=true
+    volumes:
+      - ./src:/workspace
+      - maven_cache:/home/vscode/.m2
+      - node_modules_cache:/workspace/client/node_modules
+    user: "vscode"
+    depends_on:
+      - lab-env-db
+    command: sleep infinity
+
+volumes:
+  maven_cache:
+  node_modules_cache:

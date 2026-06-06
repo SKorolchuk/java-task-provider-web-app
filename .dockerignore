@@ -1,0 +1,22 @@
+# --- Игнорируем исходный код, так как он монтируется через volumes ---
+src/
+
+# --- Игнорируем тяжелые локальные папки зависимостей ---
+**/node_modules
+**/target
+
+**/maven_cache
+**/mysql_data
+**/node_modules_cache
+
+# --- Игнорируем Git и документацию ---
+.git
+.gitignore
+README.md
+LICENSE
+
+# --- Игнорируем логи и системный мусор ---
+*.log
+**/.DS_Store
+**/.idea
+**/.vscode

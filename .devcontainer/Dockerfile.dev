@@ -1,0 +1,40 @@
+FROM eclipse-temurin:26-jdk-noble
+
+# 1. Устанавливаем утилиты напрямую из официальных репозиториев
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    maven \
+    git \
+    ca-certificates \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# 2. Безопасная адаптация пользователя (переименовываем встроенного ubuntu)
+RUN usermod -l vscode ubuntu \
+    && usermod -d /home/vscode -m vscode \
+    && groupmod -n vscode ubuntu \
+    # Сразу создаем структуру для Maven и пустую папку node_modules для фронтенда
+    # Сразу создаем ВСЮ структуру подпапок, которые пригодятся Maven
+    && mkdir -p /workspace /home/vscode/.m2/repository /home/vscode/.m2/wrapper \
+    && mkdir -p /workspace/client/node_modules \
+    # Жестко передаем права на ВСЕ созданные папки пользователю vscode
+    && chown -R vscode:vscode /workspace /home/vscode /workspace/client/node_modules
+
+
+# 3. КРИТИЧЕСКИ ВАЖНО: Переключаем контейнер на работу от имени некорневого пользователя
+USER vscode
+
+# 3. Фиксация переменных под Node.js 24.16.0 (LTS)
+ARG NODE_VERSION=24.16.0
+ENV NVM_DIR=/home/vscode/.nvm
+
+# 4. Скачивание инсталлятора NVM из официального репозитория проекта
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.5/install.sh | bash
+
+# 5. Установка конкретной версии Node.js через bash-контекст NVM
+RUN bash -c "source $NVM_DIR/nvm.sh && nvm install $NODE_VERSION && nvm use $NODE_VERSION && nvm alias default $NODE_VERSION"
+
+# 6. Экспорт точного пути к бинарникам Node.js 24.16.0 в системный PATH контейнера
+# Это делает команды node/npm доступными во всех терминалах VS Code автоматически
+ENV PATH=$NVM_DIR/versions/node/v24.16.0/bin:$PATH
+
+WORKDIR /workspace
