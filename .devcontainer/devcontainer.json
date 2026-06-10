@@ -1,0 +1,34 @@
+{
+  "name": "Secure Spring + React Env",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "web-app",
+  "workspaceFolder": "/workspace",
+
+  // Отключаем сквозную синхронизацию Git-настроек хоста, если боитесь утечки токенов
+  // нужно ещё отключить Mount Wayland Socket и Mount X11 Socket в настройках VS Code
+  "containerEnv": {
+    "GIT_TERMINAL_PROMPT": "1"
+  },
+
+  "customizations": {
+    "vscode": {
+      // Глобальные настройки безопасности для этого контейнера
+      "settings": {
+        "extensions.autoUpdate": false, // Отключаем автообновление плагинов внутри контейнера
+        "extensions.autoCheckUpdates": false
+      },
+      "extensions": [
+        "vscjava.vscode-java-pack",   // Разработчик: Microsoft
+        "vmware.vscode-spring-boot",  // Разработчик: VMware
+        "dbaeumer.vscode-eslint"      // Разработчик: Microsoft
+      ]
+    }
+  },
+
+  // Автоматическая подготовка окружения при первом запуске
+  "postCreateCommand": "echo 'Environment ready. Run npm/mvn commands manually for total control.'",
+
+  // Безопасный запуск от лица некорневого пользователя
+  "remoteUser": "vscode",
+  "shutdownAction": "stopCompose"
+}

@@ -1,0 +1,33 @@
+# --- Логи и временные файлы ---
+*.log
+.DS_Store
+Thumbs.db
+
+# --- Папка зависимостей Node.js (React) ---
+node_modules/
+maven_cache/
+mysql_data/
+node_modules_cache/
+/src/client/node_modules/
+/src/client/dist/
+/src/client/build/
+.eslintcache
+
+# --- Папка сборки Java (Spring Boot) ---
+target/
+/src/server/target/
+*.class
+
+# --- Настройки сред разработки (IDE) ---
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+!.vscode/extensions.json
+!.devcontainer/
+
+# --- Docker и Локальные кэши ---
+.docker/
+.env
+.env.local
